@@ -1,0 +1,7 @@
+{
+    "aspect_ratio":"16-9",
+    "fps":60,
+    "colors":{"background":"white"},
+    "caption":"Convex Hull",
+    "radius":10
+}
