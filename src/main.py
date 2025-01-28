@@ -37,11 +37,14 @@ while running:
     screen.fill(c_BACKGROUND)
 
     my_controller.draw_points(screen)
+    if my_controller.dragging:
+        my_controller.update_dragging()
+        my_controller.update_edges()
     my_controller.draw_edges(screen)
 
     for event in pygame.event.get():
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            my_controller.handle_mouse_event(event.button, event.pos)
+        if event.type == pygame.MOUSEBUTTONDOWN or event.type == pygame.MOUSEBUTTONUP:
+            my_controller.handle_mouse_event(event.button, event.pos, event.type)
             my_controller.update_edges()
 
         if event.type == pygame.QUIT:
