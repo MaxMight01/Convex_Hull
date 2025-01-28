@@ -1,6 +1,7 @@
 import pygame
 import os
 import utils
+import controller
 
 pygame.init()
 
@@ -21,18 +22,26 @@ pygame.display.set_caption(params["caption"])
 
 # Colors.
 c_BACKGROUND = params["colors"]["background"]
+c_POINT = params["colors"]["point"]
 
 # fps and timer.
 fps = params["fps"]
 timer = pygame.time.Clock()
 
+# Controller.
+my_controller = controller.Controller(params["radius"], c_POINT)
 
 running = True
 while running:
     timer.tick(fps)
     screen.fill(c_BACKGROUND)
 
+    my_controller.draw_points(screen)
+
     for event in pygame.event.get():
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            my_controller.handle_mouse_event(event.button, event.pos)
+
         if event.type == pygame.QUIT:
             running = False
 
