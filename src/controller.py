@@ -17,7 +17,6 @@ class Controller():
                 if square_distance(point, position) < self.radius**2:
                     self.point_list.remove(point)
                     break
-        print(self.point_list)
 
     def draw_points(self, screen):
         for point in self.point_list:
