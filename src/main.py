@@ -36,10 +36,19 @@ while running:
     timer.tick(fps)
     screen.fill(c_BACKGROUND)
 
+    mouse_coords = pygame.mouse.get_pos()
+
     my_controller.draw_points(screen)
     if my_controller.dragging:
-        my_controller.update_dragging()
+        my_controller.update_dragging(mouse_coords)
         my_controller.update_edges()
+        pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_SIZEALL)
+    else:
+        my_controller.update_hovering(mouse_coords)
+        if my_controller.hovering:
+            pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
+        else:
+            pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
     my_controller.draw_edges(screen)
 
     for event in pygame.event.get():

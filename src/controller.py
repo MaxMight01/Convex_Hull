@@ -20,6 +20,7 @@ class Controller():
         self.width = width
         self.dragging = False
         self.dragging_point = None
+        self.hovering = False
 
     def handle_mouse_event(self, button, position, type):
         if button == 1:
@@ -54,12 +55,20 @@ class Controller():
         for edge in self.edges:
             pygame.draw.aaline(screen, self.color, *edge)
 
-    def update_dragging(self):
+    def update_hovering(self, mouse_coords):
+        hovering = False
+        for point in self.point_list:
+            if square_distance(point, mouse_coords) < self.radius**2:
+                hovering = True
+                break
+        self.hovering = hovering
+
+
+    def update_dragging(self, mouse_coords):
         if self.dragging_point is not None:
             self.update = True
             self.point_list.remove(self.dragging_point)
-
-            mouse_coords = pygame.mouse.get_pos()
+            
             self.point_list.append(mouse_coords)
             self.dragging_point = mouse_coords
 
