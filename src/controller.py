@@ -1,16 +1,23 @@
 import pygame
+import pygame.gfxdraw
 from alg import jarvis_march
+
+def drawAACircle(surf, color, center, radius, width):
+    pygame.gfxdraw.aacircle(surf, *center, radius, color)  
+    pygame.gfxdraw.aacircle(surf, *center, radius-width, color)  
+    pygame.draw.circle(surf, color, center, radius, width) 
 
 def square_distance(P, Q):
     return (P[0]-Q[0])**2 + (P[1]-Q[1])**2
 
 class Controller():
-    def __init__(self, radius, color):
+    def __init__(self, radius, color, width):
         self.point_list = []
         self.radius = radius
         self.color = color
         self.update = False
         self.edges = []
+        self.width = width
 
     def handle_mouse_event(self, button, position):
         if button == 1:
@@ -25,11 +32,12 @@ class Controller():
 
     def draw_points(self, screen):
         for point in self.point_list:
-            pygame.draw.circle(screen, self.color, point, self.radius)
+            #pygame.draw.circle(screen, self.color, point, self.radius)
+            drawAACircle(screen, self.color, point, self.radius, self.width)
 
     def draw_edges(self, screen):
         for edge in self.edges:
-            pygame.draw.line(screen, self.color, edge[0], edge[1])
+            pygame.draw.aaline(screen, self.color, *edge)
 
     def update_edges(self):
         if self.update:

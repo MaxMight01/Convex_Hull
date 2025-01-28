@@ -3,8 +3,9 @@
     "fps":60,
     "colors":{
         "background":"white",
-        "point":"black"
+        "point":[0, 0, 0]
     },
     "caption":"Convex Hull",
-    "radius":10
+    "width":4,
+    "radius":12
 }
