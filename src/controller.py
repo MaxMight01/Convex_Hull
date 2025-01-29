@@ -13,13 +13,14 @@ def square_distance(P, Q):
     return (P[0]-Q[0])**2 + (P[1]-Q[1])**2
 
 class Controller():
-    def __init__(self, radius, color, width, algorithm):
+    def __init__(self, radius, color, stroke_width, screen_width, algorithm):
         self.point_list = []
         self.radius = radius
         self.color = color
         self.update = False
         self.edges = []
-        self.width = width
+        self.width = stroke_width
+        self.screen_width = screen_width
         self.dragging = False
         self.dragging_point = None
         self.hovering = False
@@ -27,6 +28,8 @@ class Controller():
         self.font = pygame.font.Font(None, 36)
         self.execution_time_text_surface = self.font.render(f"Computation Time: N/A", True, self.color)
         self.execution_time_text_rect = self.execution_time_text_surface.get_rect(topleft=(10, 10))
+        self.num_point_text_surface = self.font.render(f"Number of Points: 0", True, self.color)
+        self.num_point_text_rect = self.num_point_text_surface.get_rect(topright = (self.screen_width-10, 10))
 
     def handle_mouse_event(self, button, position, type):
         if button == 1:
@@ -69,6 +72,7 @@ class Controller():
 
     def draw_text(self, screen):
         screen.blit(self.execution_time_text_surface, self.execution_time_text_rect)
+        screen.blit(self.num_point_text_surface, self.num_point_text_rect)
 
     def update_hovering(self, mouse_coords):
         hovering = False
@@ -98,4 +102,7 @@ class Controller():
             
             self.execution_time_text_surface = self.font.render(f"Computation Time: {end_time - start_time:.6f} seconds", True, self.color)
             self.execution_time_text_rect = self.execution_time_text_surface.get_rect(topleft=(10, 10))
+            self.num_point_text_surface = self.font.render(f"Number of Points: {len(self.point_list)}", True, self.color)
+            self.num_point_text_rect = self.num_point_text_surface.get_rect(topright = (self.screen_width-10, 10))            
+
             self.update = False
