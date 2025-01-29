@@ -29,7 +29,7 @@ fps = params["fps"]
 timer = pygame.time.Clock()
 
 # Controller.
-my_controller = controller.Controller(params["radius"], c_POINT, params["width"])
+my_controller = controller.Controller(params["radius"], c_POINT, params["width"], params["algorithm"]["current"])
 
 running = True
 while running:

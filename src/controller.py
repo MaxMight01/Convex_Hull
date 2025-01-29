@@ -1,6 +1,7 @@
 import pygame
 import pygame.gfxdraw
 from alg import jarvis_march
+from alg import grahams_scan
 
 def drawAACircle(surf, color, center, radius, width):
     pygame.gfxdraw.aacircle(surf, *center, radius, color)  
@@ -11,7 +12,7 @@ def square_distance(P, Q):
     return (P[0]-Q[0])**2 + (P[1]-Q[1])**2
 
 class Controller():
-    def __init__(self, radius, color, width):
+    def __init__(self, radius, color, width, algorithm):
         self.point_list = []
         self.radius = radius
         self.color = color
@@ -21,6 +22,7 @@ class Controller():
         self.dragging = False
         self.dragging_point = None
         self.hovering = False
+        self.algorithm = algorithm
 
     def handle_mouse_event(self, button, position, type):
         if button == 1:
@@ -52,8 +54,14 @@ class Controller():
             drawAACircle(screen, self.color, point, self.radius, self.width)
 
     def draw_edges(self, screen):
-        for edge in self.edges:
-            pygame.draw.aaline(screen, self.color, *edge)
+        if self.algorithm == "Jarvis March":
+            for edge in self.edges: # Edges are given here
+                pygame.draw.aaline(screen, self.color, *edge)
+        elif self.algorithm == "Graham-s Scan":
+            for i in range(0, len(self.edges)-1): # Circular set of points are given here
+                pygame.draw.aaline(screen, self.color, self.edges[i], self.edges[i+1])
+            
+            # pygame.draw.aaline(screen, self.color, self.edges[0], self.edges[-1])
 
     def update_hovering(self, mouse_coords):
         hovering = False
@@ -74,5 +82,8 @@ class Controller():
 
     def update_edges(self):
         if self.update:
-            self.edges = jarvis_march.ConvexHull(self.point_list)
+            if self.algorithm == "Jarvis March":
+                self.edges = jarvis_march.ConvexHull(self.point_list)
+            elif self.algorithm == "Graham-s Scan":
+                self.edges = grahams_scan.ConvexHull(self.point_list)
             self.update = False

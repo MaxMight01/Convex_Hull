@@ -7,5 +7,9 @@
     },
     "caption":"Convex Hull",
     "width":4,
-    "radius":12
+    "radius":12,
+    "algorithm": {
+        "current": "Graham-s Scan",
+        "options": ["Jarvis March", "Graham-s Scan"]
+    }
 }
