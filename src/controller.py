@@ -13,7 +13,7 @@ def square_distance(P, Q):
     return (P[0]-Q[0])**2 + (P[1]-Q[1])**2
 
 class Controller():
-    def __init__(self, radius, color, stroke_width, screen_width, algorithm):
+    def __init__(self, radius, color, stroke_width, screen_width, screen_height, algorithm):
         self.point_list = []
         self.radius = radius
         self.color = color
@@ -21,6 +21,7 @@ class Controller():
         self.edges = []
         self.width = stroke_width
         self.screen_width = screen_width
+        self.screen_height = screen_height
         self.dragging = False
         self.dragging_point = None
         self.hovering = False
@@ -30,6 +31,8 @@ class Controller():
         self.execution_time_text_rect = self.execution_time_text_surface.get_rect(topleft=(10, 10))
         self.num_point_text_surface = self.font.render(f"Number of Points: 0", True, self.color)
         self.num_point_text_rect = self.num_point_text_surface.get_rect(topright = (self.screen_width-10, 10))
+        self.algorithm_text_surface = self.font.render(f"Current Algorithm: {self.algorithm}", True, self.color)
+        self.algorithm_text_rect = self.algorithm_text_surface.get_rect(bottomleft = (10, screen_height-10))
 
     def handle_mouse_event(self, button, position, type):
         if button == 1:
@@ -64,7 +67,7 @@ class Controller():
         if self.algorithm == "Jarvis March":
             for edge in self.edges: # Edges are given here
                 pygame.draw.aaline(screen, self.color, *edge)
-        elif self.algorithm == "Graham-s Scan":
+        elif self.algorithm == "Graham's Scan":
             for i in range(0, len(self.edges)-1): # Circular set of points are given here
                 pygame.draw.aaline(screen, self.color, self.edges[i], self.edges[i+1])
             
@@ -73,6 +76,7 @@ class Controller():
     def draw_text(self, screen):
         screen.blit(self.execution_time_text_surface, self.execution_time_text_rect)
         screen.blit(self.num_point_text_surface, self.num_point_text_rect)
+        screen.blit(self.algorithm_text_surface, self.algorithm_text_rect)
 
     def update_hovering(self, mouse_coords):
         hovering = False
@@ -96,7 +100,7 @@ class Controller():
             start_time = time.time()
             if self.algorithm == "Jarvis March":
                 self.edges = jarvis_march.ConvexHull(self.point_list)
-            elif self.algorithm == "Graham-s Scan":
+            elif self.algorithm == "Graham's Scan":
                 self.edges = grahams_scan.ConvexHull(self.point_list)
             end_time = time.time()
             

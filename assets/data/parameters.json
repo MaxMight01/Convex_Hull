@@ -9,7 +9,7 @@
     "width":4,
     "radius":12,
     "algorithm": {
-        "current": "Graham-s Scan",
-        "options": ["Jarvis March", "Graham-s Scan"]
+        "current": "Graham's Scan",
+        "options": ["Jarvis March", "Graham's Scan"]
     }
 }
