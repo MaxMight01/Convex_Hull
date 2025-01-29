@@ -1,5 +1,6 @@
 import pygame
 import pygame.gfxdraw
+import time
 from alg import jarvis_march
 from alg import grahams_scan
 
@@ -23,6 +24,9 @@ class Controller():
         self.dragging_point = None
         self.hovering = False
         self.algorithm = algorithm
+        self.font = pygame.font.Font(None, 36)
+        self.execution_time_text_surface = self.font.render(f"Computation Time: N/A", True, self.color)
+        self.execution_time_text_rect = self.execution_time_text_surface.get_rect(topleft=(10, 10))
 
     def handle_mouse_event(self, button, position, type):
         if button == 1:
@@ -63,6 +67,9 @@ class Controller():
             
             # pygame.draw.aaline(screen, self.color, self.edges[0], self.edges[-1])
 
+    def draw_text(self, screen):
+        screen.blit(self.execution_time_text_surface, self.execution_time_text_rect)
+
     def update_hovering(self, mouse_coords):
         hovering = False
         for point in self.point_list:
@@ -82,8 +89,13 @@ class Controller():
 
     def update_edges(self):
         if self.update:
+            start_time = time.time()
             if self.algorithm == "Jarvis March":
                 self.edges = jarvis_march.ConvexHull(self.point_list)
             elif self.algorithm == "Graham-s Scan":
                 self.edges = grahams_scan.ConvexHull(self.point_list)
+            end_time = time.time()
+            
+            self.execution_time_text_surface = self.font.render(f"Computation Time: {end_time - start_time:.6f} seconds", True, self.color)
+            self.execution_time_text_rect = self.execution_time_text_surface.get_rect(topleft=(10, 10))
             self.update = False

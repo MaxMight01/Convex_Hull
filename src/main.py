@@ -51,6 +51,8 @@ while running:
             pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
     my_controller.draw_edges(screen)
 
+    my_controller.draw_text(screen)
+
     for event in pygame.event.get():
         if event.type == pygame.MOUSEBUTTONDOWN or event.type == pygame.MOUSEBUTTONUP:
             my_controller.handle_mouse_event(event.button, event.pos, event.type)
