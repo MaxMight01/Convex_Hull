@@ -1,0 +1,140 @@
+\documentclass[12pt]{article}
+\usepackage{amsmath, amssymb, graphicx, hyperref, enumerate}
+\usepackage{xcolor, algorithm, algpseudocode, subcaption, float}
+\usepackage{mathrsfs}
+
+\title{Convex Hull Algorithms: Jarvis’s March and Graham’s Scan}
+\author{Ramdas Singh}
+\date{}
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\C}{\mathcal{C}}
+\newcommand{\CH}{\mathcal{CH}}
+
+\begin{document}
+\maketitle
+
+\section*{Convexity}
+\textit{Introduce the rubberband.}\\
+
+A subset $\C \subseteq \R^{2}$ is called \textit{convex} if and only if for all $p,q \in S$, $(1-\lambda) p + \lambda q \in \C$ for all $\lambda \in [0,1]$. Other equivalent definitions---
+\begin{itemize}
+    \item A set $\C \subseteq \R^{2}$ is convex if and only if it can be expressed as the intersection of (possible infinitely many) closed half-spaces.
+    \item A set $\C \subseteq \R^{2}$ is convex if and only if for every point $p \in \R^{2}\backslash \C$, there exists a hyper plane diving the space into one open half-space containing $p$ and one closed half-space containing $\C$.
+\end{itemize}
+Definition can be easily extended to higher dimensions.
+
+\section*{Convex Hull}
+The \textit{convex hull} $\CH(S)$ of a set $S \subseteq \R^{2}$ is the `smallest' convex set that contains $S$. More precisely,
+\begin{itemize}
+    \item The convex hull $\CH(S)$ of a set $S$ is the intersection of all convex sets that contain $S$:
+    \[
+        \CH(S) = \bigcap_{\lambda \in \Lambda} \{C \subseteq \R^{n} : S \subseteq C,\; C \text{ is convex}\}.
+    \]
+    \item The convex hull $\CH(S)$ of a set $S$ consists of all convex combinations of finitely many points in $S$:
+    \[
+        \CH(S) = \{\sum_{i=1}^{k} \lambda_{i}p_{i} : p_{i} \in S,\; \lambda_{i} \geq 0,\; \sum_{i=1}^{k} \lambda_{i} = 1,\; k \in \N\}
+    \]
+\end{itemize}
+
+\section*{Vertices}
+The \textit{vertices}, intuitively, are simply the vertices of the polygon formed by the convex hull. Formally, the \textit{non-vertices} are defined as
+\[
+    \overline{V}(S) = \{p \in S: \CH(S) = \CH(S\backslash\{p\})\}
+\]
+Thus, the vertices become
+\[
+    V(S) = S\backslash \overline{V}(S).
+\]
+
+\subsection*{Problem Statement}
+Given a set $S = \{p_{1},p_{2},\ldots,p_{n}\}$ of points in $\R^{2}$, compute the ordered set $V(S)$, ordered in clockwise direction.
+
+
+\section*{Interesting (and Helpful) Results}
+First introduce Jarvis and Graham; they developed fantastic convex hull algorithms for this problem statement.
+
+\subsection*{Caratheodory's Theorem (1907)}
+If $p \in \CH(S)$ for $S \subseteq \R^{2}$, then $p$ can be expressed as $p = \sum_{i=1}^{3} \lambda_{i} p_{i}$ where $\lambda_{i} \geq 0$ and $\sum_{i=1}^{k} \lambda_{i}$ for some $p_{i} \in S$.
+
+All it says is, if $p$ is in the convex hull, then there exists a triangle containing $p$ whose vertices are formed by vertices in $S$. Gives us an idea that to determine if $p$ is a vertex or not, we need only consider triangles; gave insight to Jarvis that only small subset of poitns is needed to represent a convex hull, and that they can be computed incrementally.
+
+\subsection*{Radon's Theorem (1921)}
+Any set of 4 points in $\R^{2}$ can be partitioned into two sets whose convex hulls intersect. (Proof is a good exercise). Evoked the idea of divide and conquer.
+
+
+\section*{Jarvis March (1973)}
+\textit{R.~A.~Jarvis}. Involved in robotics, computer vision, path finding, and image processing.
+
+\subsection*{Concept (Bruteforce wrapping)}
+\begin{enumerate}
+    \item Start with an empty set $V(S) = \emptyset$.
+    \item Consider all $(p,q) \in S \times S$.
+    \item If all $r \in S\setminus\{p,q\}$ exist to the right of the directed line $\ell(p,q)$, then set $V(S)$ to be $V(S) \cup \{p,q\}$.
+    \item Order clockwise, and return.
+\end{enumerate}
+
+\newpage
+
+\subsection*{Pseudocode}
+\begin{algorithm}
+\caption{Jarvis’s March (Bruteforce Wrapping) }
+\begin{algorithmic}[1]
+\Require A finite set of points \( S \subset \mathbb{R}^2 \).
+\Ensure The set of extreme points \( V(S) \), arranged in a clockwise order.
+
+\State Initialize \( V(S) \gets \emptyset \).
+\ForAll{distinct pairs \( (p, q) \in S \times S \) with \( p \neq q \)}
+    \State Assume \( \ell(p, q) \), the directed line through \( p \) and \( q \), is a boundary of \( V(S) \).
+    \ForAll{points \( r \in S \setminus \{p, q\} \)}
+        \If{\( r \) lies strictly to the left of \( \ell(p, q) \)}
+            \State Discard \( \ell(p, q) \) as a boundary.
+        \EndIf
+    \EndFor
+    \If{\( \ell(p, q) \) was never discarded}
+        \State Include \( p \) and \( q \) in \( V(S) \).
+    \EndIf
+\EndFor
+
+\State Order the elements of \( V(S) \) in a clockwise manner.
+\State Return \( V(S) \).
+\end{algorithmic}
+\end{algorithm}
+
+
+\subsection*{Time Complexity}
+\[
+O(n^{2}h) + O(h \log h) = O(n^{2}h), \quad h = \text{number of vertices}
+\]
+Really, on the worst case possible when every point in $S$ is a vertex, this is $O(n^3)$.
+
+\textit{Revolutionary, but completely unoptimized.}\\
+Gift wrapping version is much better; the concept goes as follows:
+
+\subsection*{Concept (Gift wrapping)}
+\begin{enumerate}
+    \item Start with an empty set $V(S) = \emptyset$.
+    \item Immediately add the `leftmost' point, $p_{0}$ to $V(S)$.
+    \item You now only need to consider $(p_{0},p) \in S \times S$ where $p \neq p_{0}$.
+    \item If all $r \in S\setminus\{p_{0},p\}$ exist to the right of the directed line $\ell(p,q)$, then set $p_{1} = p$ and add $p_{1}$ to $V(S)$.
+    \item Continue with $(p_{1},p) \in S \times S$ where $p \neq p_{1}$ until you similarly find $p_{2}$. Keep continuing until $p_{h}$ is forced to be $p_{0}$. Return.
+\end{enumerate}
+
+\subsection*{Some Explanations}
+\subsubsection*{What happens if $r$ lies on $\ell(p,q)$?}
+We could simply add it, increasing the value of $h$ and increasing computation time. But a check for not adding it would preferable; this check would cost us $O(h)$, thus not increasing computation time by much.
+
+\subsubsection*{How to check if $r$ lies to the right of $\ell(p,q)$?}
+You could find the angle between $\ell(p,q)$ and $\ell(q,r)$. A better approach is to compute
+\[
+    D = \det \begin{pmatrix}
+        1 & p_{x} & p_{y} \\
+        1 & q_{x} & q_{y} \\
+        1 & r_{x} & r_{y}
+    \end{pmatrix}
+\]
+The sign of $D$ tells whether $r$ lies to the right (and on) or the left of the line.
+
+
+\end{document}
